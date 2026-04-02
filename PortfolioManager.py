@@ -1,20 +1,54 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Dec 15 19:34:26 2021
+Portfolio Backtesting Engine
 
-@author: Mike
-"""
+This module serves as the central orchestration layer for the trading system.
+It coordinates data loading, strategy execution, portfolio updates, and
+performance visualization across multiple investment strategies.
 
-"""
-This file controls all other files and performs the main simulation of 6 months for each
-portfolio. It also plots the data and produces the output needed for all the questions.
+Overview
+--------
+The script simulates portfolio performance over a fixed time horizon using
+several strategies:
+
+- Random Strategy (baseline stochastic allocation)
+- SPY Buy-and-Hold Strategy (market benchmark)
+- Linear Regression Strategy (momentum-based signal)
+- Monte Carlo Portfolio Strategy (simulation-based allocation)
+
+Core Responsibilities
+---------------------
+- Load stock universe and trading dates from local data
+- Initialize and track portfolio states over time
+- Execute strategy-specific buy/sell logic at each timestep
+- Compute portfolio values across strategies
+- Generate plots for performance comparison and analysis
+
+Monte Carlo Analysis
+-------------------
+Includes additional analysis using Monte Carlo portfolio generation:
+- Random portfolio sampling
+- Risk-return scatter visualization
+- Sharpe ratio-based portfolio selection
+- Comparison of theoretical vs simulated returns
+
+Assumptions
+-----------
+- Historical price data is stored locally in CSV format
+- No transaction costs, slippage, or liquidity constraints
+- Trading occurs at discrete daily intervals
+- All strategies operate on the same stock universe
+
+Outputs
+-------
+- Time series plots of portfolio values
+- Risk-return scatter plots
+- Strategy comparison visualizations
+
+Author: Mike
 """
 #import statements
 import os
-import time
-import datetime
-import pandas as pd
-import json
 from csv import reader
 from datetime import date, timedelta, datetime
 import RandomAlg as r
@@ -29,15 +63,17 @@ import time
 plt.rcParams["figure.figsize"] = [10,6] #setting the figure size
 start = time.perf_counter() #starting the timer
 
-stock_list = os.listdir("./StockData") #the list of all stocks
-date_list = [] #the list of the dates from the start of the portfolio to the end
-total_date_list = [] #the list of all dates when the stock exchange was open
+# Load stock universe and initialize date containers
+stock_list = os.listdir("./StockData")
+date_list = []          # filtered trading dates within simulation window
+total_date_list = []    # full trading calendar from dataset
 
 start_date = date(2021, 6, 1).strftime("%Y-%m-%d") #the starting date of the portfolios
 end_date = date(2021, 12, 1).strftime("%Y-%m-%d") #the ending date of the portfolios
 delta = timedelta(days=1) #how much time moves forward each day
 
-#this loop gets all the days where the stock exchange is open
+# Extract valid trading dates using a reference stock (AAPL)
+# This assumes all stocks share the same trading calendar
 dir_path = os.path.dirname(os.path.realpath(__file__))+"\\"+"StockData"+"\\"+"AAPL.csv"
 with open(dir_path, "r") as f:
     next(f)
@@ -51,6 +87,9 @@ with open(dir_path, "r") as f:
 
 first_day = (datetime.strptime(date_list[0],"%Y-%m-%d")-delta).strftime("%Y-%m-%d") #the first day of the portfolio
 last_index = first_day #used for indexing purposes
+
+# Initialize portfolio dictionaries for each strategy
+# Each portfolio stores holdings indexed by date
 
 #the portfolio for the random algorithm
 RandomPortfolio = {}
@@ -69,7 +108,10 @@ value_Regression = []
 price_history_apple = []
 m_value_apple = []
 
-#Monte carlo simulation portfolios
+# Monte Carlo simulation setup:
+# - Define subset of stocks
+# - Generate return history
+# - Simulate portfolio allocations
 
 #3.a)
 days_back = 7 #the number of days back the algorithm will process
@@ -86,7 +128,7 @@ plt.xlabel("Date")
 plt.xticks(np.arange(0,len(date_list[42-days_back:42]),2));
 plt.ylabel("Stock Returns")
 plt.legend()
-plt.title("Daily Stock returns over time (Question 3a)")
+plt.title("Daily Stock returns over time")
 plt.show()
 
 #3.b)
@@ -147,11 +189,14 @@ plt.scatter(variance_list[-1], (np.array(mean_port_returns)*100)[-1], color = "g
 plt.xlabel("Portfolio Standard Deviation")
 plt.legend(loc = "upper left")
 plt.ylabel("Returns (%)")
-plt.title("Portfolio risk-return Question (3c)")
+plt.title("Portfolio Risk-Return")
 plt.show()
 
-#main chunk of the program, this loops through the days and simulates how each algorithm
-#will react and change to the market
+# Main simulation loop:
+# For each trading day:
+# - Execute strategy-specific buy/sell logic
+# - Update portfolio holdings
+# - Compute portfolio value
 for i in range(len(date_list)): #looping through the business days
     #updating random portfolio
     RandomPortfolio[date_list[i]] = r.Sell(RandomPortfolio[last_index], date_list[i], stock_list)
@@ -201,8 +246,12 @@ for i in range(len(partitions[3])): #creating a string to make legend labels mor
 
 
 
-#plotting all the data obtained from the simulation
-    
+# Visualization:
+# Generate plots for:
+# - Strategy performance comparison
+# - Monte Carlo portfolio behavior
+# - Risk-return relationships
+
 #plotting question 3b
 plt.plot(date_list, example_port_1, label = "{}".format(example_port_1_txt))
 plt.plot(date_list, example_port_2, label = "{}".format(example_port_2_txt))
@@ -211,7 +260,7 @@ plt.xlabel("Date")
 plt.ylabel("Value (dollars)")
 plt.xticks(np.arange(0,len(date_list),40));
 plt.legend()
-plt.title("Portfolio Value over time using Monte Carlo method (3b)")
+plt.title("Portfolio Value over time using Monte Carlo method")
 plt.show()
 
 #plotting question 3b with theoretical returns
@@ -225,7 +274,7 @@ plt.xlabel("Date")
 plt.ylabel("Value (dollars)")
 plt.xticks(np.arange(0,len(date_list[0:20]),4));
 plt.legend()
-plt.title("Portfolio Value over time using Monte Carlo method (3b)")
+plt.title("Portfolio Value over time using Monte Carlo method")
 plt.show()
 
 #plotting the data for question 3c
@@ -237,7 +286,7 @@ plt.xlabel("Date")
 plt.ylabel("Value (dollars)")
 plt.xticks(np.arange(0,len(date_list),40));
 plt.legend()
-plt.title("Portfolio Value over time using Sharpe ratio and risk (3c)")
+plt.title("Portfolio Value over time using Sharpe ratio and risk")
 plt.show()
 
 #plotting the data for question 4
@@ -250,7 +299,7 @@ plt.xlabel("Date")
 plt.ylabel("Value (dollars)")
 plt.xticks(np.arange(0,len(date_list),40));
 plt.legend()
-plt.title("Portfolio Worth over time using different investment strategies (Question 4)")
+plt.title("Portfolio Worth over time using different investment strategies")
 plt.show()
 
 #plotting a value and price of AAPL over time
@@ -267,10 +316,10 @@ ax1.set_ylabel('Value (dollars)', color='g')
 plt.xticks(np.arange(0,len(date_list2),4));
 ax2.set_ylabel('a', color='b')
 fig.legend(loc='upper right', bbox_to_anchor=(0.4, 0.85))
-plt.title("Price and a value of AAPL over time (Question 2)")
+plt.title("Price and a value of AAPL over time")
 plt.show()
 
-#determining the time taken
+# Measure total execution time for performance tracking
 end = time.perf_counter()
 print(end-start)
     
