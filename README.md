@@ -65,20 +65,12 @@ Implements a simulation-based portfolio selection approach:
 
 Steps:
 
-1. Compute daily log returns:
-   $$
-   \log\left(\frac{P_t}{P_{t-1}}\right)
-   $$
-2. Generate random portfolio weight allocations
-3. Compute expected return:
-   $$
-   \mathbb{E}[R] = \sum w_i \mu_i
-   $$
-4. Compute risk via covariance matrix
-5. Evaluate portfolios using **Sharpe Ratio**:
-   $$
-   \frac{\text{Return}}{\text{Volatility}}
-   $$
+
+1. Compute daily log returns: log(P_t / P_{t-1})  
+2. Generate random portfolio weight allocations  
+3. Compute expected return: E[R] = Σ (w_i * μ_i)  
+4. Compute risk via covariance matrix  
+5. Evaluate portfolios using Sharpe Ratio = Return / Volatility  
 
 **Key insight:**
 Portfolios with higher Sharpe ratios tend to outperform, balancing risk and return .
