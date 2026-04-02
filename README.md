@@ -6,7 +6,7 @@ A Python-based backtesting system for evaluating multiple trading strategies, in
 
 ## Results Preview
 
-![Strategy Comparison](Results/Portfolio Value Different Strategies.png)
+![Strategy Comparison](Results/Portfolio_Value_Different_Strategies.png)
 
 **Key Takeaways:**
 
@@ -135,7 +135,7 @@ Stock-Trading-Algorithms/
 
 ### Strategy Performance Comparison
 
-![Strategy Comparison](Results/Portfolio Value Different Strategies.png)
+![Strategy Comparison](Results/Portfolio_Value_Different_Strategies.png)
 
 The Monte Carlo strategy (highest Sharpe ratio) significantly outperforms all others.
 The random strategy underperforms, while SPY provides a strong baseline.
@@ -144,7 +144,7 @@ The random strategy underperforms, while SPY provides a strong baseline.
 
 ### Monte Carlo Risk–Return Tradeoff
 
-![Monte Carlo Frontier](Results/Portfolio Risk-Return.png)
+![Monte Carlo Frontier](Results/Portfolio_Risk-Return.png)
 
 Each point represents a simulated portfolio.
 Higher-return portfolios generally require higher risk, and the optimal portfolio maximizes risk-adjusted return.
@@ -153,7 +153,7 @@ Higher-return portfolios generally require higher risk, and the optimal portfoli
 
 ### Portfolio Selection via Sharpe Ratio
 
-![Monte Carlo Performance](Results/Portfolio Value Different Sharpe.png)
+![Monte Carlo Performance](Results/Portfolio_Value_Different_Sharpe.png)
 
 The highest Sharpe portfolio consistently achieves the strongest performance compared to low-risk and equal-weight portfolios.
 
@@ -161,7 +161,7 @@ The highest Sharpe portfolio consistently achieves the strongest performance com
 
 ### Linear Regression Signal Behavior
 
-![Linear Regression](Results/AAPL Linear Regression.png)
+![Linear Regression](Results/AAPL_Linear_Regression.png)
 
 The regression slope follows price trends but reacts with delay, demonstrating why it is a weak predictive signal.
 
